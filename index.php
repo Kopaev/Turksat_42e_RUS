@@ -516,20 +516,23 @@ if (file_exists($cache_file)) {
         .container { max-width: 1200px; margin: 0 auto; padding: 15px; }
 
         header {
-            text-align: center;
-            padding: 25px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 15px;
             background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
             border-bottom: 1px solid var(--border);
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.2rem;
             background: linear-gradient(90deg, var(--accent), var(--accent-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px; }
+        .subtitle { color: var(--text-secondary); font-size: 0.85rem; }
 
         /* Loading screen */
         .loading-container {
@@ -971,7 +974,7 @@ if (file_exists($cache_file)) {
 <div class="main-content" id="main-content">
     <header>
         <h1>📺 TV Guide</h1>
-        <p class="subtitle">Программа передач</p>
+        <span class="subtitle">Программа передач</span>
     </header>
 
     <div class="container">
