@@ -475,9 +475,36 @@ if (file_exists($cache_file)) {
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta charset="UTF-8">
-    <title>📺 TV Guide</title>
+    <title>📺 TV Guide — Программа русских каналов на Turksat 42°E</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Телепрограмма русскоязычных каналов на спутнике Turksat 42°E. ТНТ, СТС, НТВ, РЕН ТВ, Россия 24 и другие. Программа на 7 дней вперёд.">
+    <meta name="keywords" content="turksat 42e, спутниковое тв, программа передач, русские каналы, тнт, стс, нтв, рен тв, россия 24, телепрограмма">
+    <meta name="author" content="vanlife.bez.coffee">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://turksat42erus.vanlife.bez.coffee/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Turksat 42E — Русские каналы">
+    <meta property="og:title" content="📺 Программа русскоязычных каналов на спутнике Turksat 42°E">
+    <meta property="og:description" content="Телепрограмма русских и международных каналов на спутнике Turksat 42°E. ТНТ, СТС, НТВ, РЕН ТВ, Россия 24. Удобный поиск по датам и каналам.">
+    <meta property="og:url" content="https://turksat42erus.vanlife.bez.coffee/">
+    <meta property="og:image" content="https://turksat42erus.vanlife.bez.coffee/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="ru_RU">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="📺 Программа русскоязычных каналов на Turksat 42°E">
+    <meta name="twitter:description" content="Актуальная программа передач русских и международных телеканалов на спутнике Turksat 42°E.">
+    <meta name="twitter:image" content="https://turksat42erus.vanlife.bez.coffee/og-image.jpg">
+
+    <!-- PWA -->
+    <meta name="theme-color" content="#1B3C67">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -937,6 +964,154 @@ if (file_exists($cache_file)) {
         }
         .refresh-btn:hover { border-color: var(--accent); color: var(--text-primary); }
 
+        .github-btn {
+            display: inline-block;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .github-btn:hover { border-color: var(--accent); color: var(--text-primary); }
+
+        /* PWA Install Prompt */
+        .pwa-install-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 12px 15px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1500;
+            animation: slideUp 0.3s ease;
+        }
+        .pwa-install-banner.show { display: flex; }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .pwa-install-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .pwa-install-text { flex: 1; }
+        .pwa-install-title { font-weight: 600; font-size: 0.9rem; }
+        .pwa-install-desc { font-size: 0.75rem; color: var(--text-secondary); }
+        .pwa-install-btn {
+            padding: 8px 16px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .pwa-install-btn:hover { background: var(--accent-light); }
+        .pwa-install-close {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .pwa-install-close:hover { background: var(--bg-card); color: var(--text-primary); }
+
+        /* iOS Install Modal */
+        .ios-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .ios-modal-overlay.active { opacity: 1; visibility: visible; }
+        .ios-modal {
+            background: var(--bg-secondary);
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .ios-modal-overlay.active .ios-modal { transform: translateY(0); }
+        .ios-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .ios-modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .ios-modal-title { font-weight: 600; font-size: 1.1rem; }
+        .ios-modal-steps { margin-bottom: 20px; }
+        .ios-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .ios-step:last-child { border-bottom: none; }
+        .ios-step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .ios-step-text { font-size: 0.9rem; }
+        .ios-step-icon { font-size: 1.2rem; }
+        .ios-modal-close {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .ios-modal-close:hover { border-color: var(--accent); }
+
         @media (max-width: 500px) {
             .program-item { flex-direction: column; gap: 4px; }
             .program-time { width: auto; }
@@ -988,6 +1163,7 @@ if (file_exists($cache_file)) {
         <div class="update-info">
             <span id="update-time"></span>
             <button class="refresh-btn" onclick="forceRefresh()">🔄 Обновить EPG</button>
+            <a href="https://github.com/Kopaev/Turksat_42e_RUS" target="_blank" rel="noopener" class="github-btn">⭐ GitHub</a>
         </div>
     </footer>
 </div>
@@ -1010,6 +1186,45 @@ if (file_exists($cache_file)) {
             <button class="modal-btn" onclick="resetOffset()">Сбросить</button>
             <button class="modal-btn primary" onclick="saveOffset()">Сохранить</button>
         </div>
+    </div>
+</div>
+
+<!-- PWA Install Banner (Android/Desktop) -->
+<div class="pwa-install-banner" id="pwa-banner">
+    <div class="pwa-install-icon">📺</div>
+    <div class="pwa-install-text">
+        <div class="pwa-install-title">Установить TV RU 42E</div>
+        <div class="pwa-install-desc">Добавьте на главный экран для быстрого доступа</div>
+    </div>
+    <button class="pwa-install-btn" id="pwa-install-btn">Установить</button>
+    <button class="pwa-install-close" onclick="closePwaBanner()">×</button>
+</div>
+
+<!-- iOS Install Modal -->
+<div class="ios-modal-overlay" id="ios-modal" onclick="closeIosModal(event)">
+    <div class="ios-modal" onclick="event.stopPropagation()">
+        <div class="ios-modal-header">
+            <div class="ios-modal-icon">📺</div>
+            <div class="ios-modal-title">Установить TV RU 42E</div>
+        </div>
+        <div class="ios-modal-steps">
+            <div class="ios-step">
+                <div class="ios-step-num">1</div>
+                <div class="ios-step-text">Нажмите кнопку <strong>Поделиться</strong></div>
+                <div class="ios-step-icon">⬆️</div>
+            </div>
+            <div class="ios-step">
+                <div class="ios-step-num">2</div>
+                <div class="ios-step-text">Пролистайте вниз и нажмите <strong>«На экран Домой»</strong></div>
+                <div class="ios-step-icon">➕</div>
+            </div>
+            <div class="ios-step">
+                <div class="ios-step-num">3</div>
+                <div class="ios-step-text">Нажмите <strong>«Добавить»</strong></div>
+                <div class="ios-step-icon">✓</div>
+            </div>
+        </div>
+        <button class="ios-modal-close" onclick="closeIosModal()">Понятно</button>
     </div>
 </div>
 
@@ -1219,6 +1434,7 @@ function showMainContent() {
     document.getElementById('main-content').classList.add('visible');
     renderDates();
     loadData();
+    initPwa(); // Инициализация PWA промптов
 }
 
 async function loadData() {
@@ -1435,6 +1651,115 @@ function forceRefresh() {
     btn.textContent = '🚀 Загрузить EPG';
     addLog('--- Принудительное обновление ---');
     startLoading(false);
+}
+
+// ==================== PWA Install ====================
+
+let deferredPrompt = null;
+const PWA_DISMISSED_KEY = 'tv_guide_pwa_dismissed';
+const PWA_INSTALLED_KEY = 'tv_guide_pwa_installed';
+
+// Проверка iOS
+function isIos() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+// Проверка standalone режима (уже установлено)
+function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || 
+           window.navigator.standalone === true;
+}
+
+// Проверка, что баннер был закрыт недавно (24 часа)
+function wasDismissedRecently() {
+    const dismissed = localStorage.getItem(PWA_DISMISSED_KEY);
+    if (!dismissed) return false;
+    const dismissedTime = parseInt(dismissed, 10);
+    const hoursSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60);
+    return hoursSinceDismissed < 24;
+}
+
+// Показать баннер установки (Android/Desktop)
+function showPwaBanner() {
+    if (isStandalone() || wasDismissedRecently()) return;
+    document.getElementById('pwa-banner').classList.add('show');
+}
+
+// Закрыть баннер
+function closePwaBanner() {
+    document.getElementById('pwa-banner').classList.remove('show');
+    localStorage.setItem(PWA_DISMISSED_KEY, Date.now().toString());
+}
+
+// Показать iOS модалку
+function showIosModal() {
+    if (isStandalone() || wasDismissedRecently()) return;
+    document.getElementById('ios-modal').classList.add('active');
+}
+
+// Закрыть iOS модалку
+function closeIosModal(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('ios-modal').classList.remove('active');
+    localStorage.setItem(PWA_DISMISSED_KEY, Date.now().toString());
+}
+
+// Обработка события beforeinstallprompt (Android/Desktop Chrome)
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Показываем баннер через 3 секунды после загрузки
+    setTimeout(showPwaBanner, 3000);
+});
+
+// Кнопка установки
+document.getElementById('pwa-install-btn')?.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+        localStorage.setItem(PWA_INSTALLED_KEY, 'true');
+    }
+    
+    deferredPrompt = null;
+    closePwaBanner();
+});
+
+// Обработка успешной установки
+window.addEventListener('appinstalled', () => {
+    localStorage.setItem(PWA_INSTALLED_KEY, 'true');
+    closePwaBanner();
+});
+
+// Показ iOS инструкции
+function initIosPrompt() {
+    if (!isIos() || isStandalone() || wasDismissedRecently()) return;
+    
+    // Показываем через 5 секунд
+    setTimeout(showIosModal, 5000);
+}
+
+// Инициализация PWA при загрузке главного контента
+function initPwa() {
+    if (isIos()) {
+        initIosPrompt();
+    }
+}
+
+// Регистрация Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('SW registered:', registration.scope);
+            })
+            .catch((error) => {
+                console.log('SW registration failed:', error);
+            });
+    });
 }
 </script>
 </body>
