@@ -1,7 +1,32 @@
 {
-  "name": "TV RU 42E ",
-  "short_name": "TV RU 42E ",
+  "name": "TV RU 42E",
+  "short_name": "TV RU 42E",
+  "description": "Программа русскоязычных каналов на спутнике Turksat 42°E",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1B3C67",
+  "theme_color": "#1B3C67",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ru",
   "icons": [
+    {
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
@@ -15,7 +40,5 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#1B3C67",
-  "background_color": "#1B3C67",
-  "display": "standalone"
+  "categories": ["entertainment", "utilities"]
 }
