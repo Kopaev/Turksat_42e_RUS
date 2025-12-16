@@ -1,6 +1,6 @@
 {
-  "name": "TV RU 42E",
-  "short_name": "TV RU 42E",
+  "name": "Программа передач",
+  "short_name": "Программа передач",
   "description": "Программа русскоязычных каналов на спутнике Turksat 42°E",
   "start_url": "/",
   "display": "standalone",
