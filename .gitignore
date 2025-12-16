@@ -1,0 +1,8 @@
+# EPG files (Electronic Program Guide) - too large for GitHub
+epg_lite.xml
+epg.xml
+*.xml
+
+# Temporary files
+*.tmp
+*.log
