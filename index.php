@@ -416,9 +416,32 @@ if (isset($_GET['action']) && $_GET['action'] === 'update_cache') {
  */
 if (isset($_GET['action']) && $_GET['action'] === 'get_data') {
     header('Content-Type: application/json; charset=utf-8');
-
+    
+    // Кеширование HTTP ответов
+    $cache_max_age = 300; // 5 минут
+    header('Cache-Control: public, max-age=' . $cache_max_age);
+    
     if (!file_exists($cache_file)) {
         echo json_encode(['success' => false, 'no_cache' => true], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    
+    // ETag и Last-Modified для условных запросов
+    $cache_mtime = filemtime($cache_file);
+    $etag = '"' . md5($cache_file . $cache_mtime) . '"';
+    header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $cache_mtime) . ' GMT');
+    header('ETag: ' . $etag);
+    
+    // Проверка If-None-Match
+    if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']) === $etag) {
+        header('HTTP/1.1 304 Not Modified');
+        exit;
+    }
+    
+    // Проверка If-Modified-Since
+    if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && 
+        strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $cache_mtime) {
+        header('HTTP/1.1 304 Not Modified');
         exit;
     }
 
@@ -941,6 +964,30 @@ if (file_exists($cache_file)) {
             margin-bottom: 8px;
         }
 
+        .expand-toggle {
+            display: inline-block;
+            margin: 4px 12px 8px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .expand-toggle:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .hidden-programs {
+            display: none;
+        }
+        .hidden-programs.show {
+            display: block;
+        }
+
         footer {
             text-align: center;
             padding: 25px;
@@ -1231,6 +1278,27 @@ if (file_exists($cache_file)) {
 <script>
 const weekdays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
+// Порядок каналов (по запросу пользователя)
+const CHANNEL_ORDER = [
+    'ТНТ International',
+    'СТС International',
+    'Домашний International',
+    'РЕН International',
+    '5 International',
+    'Перец International',
+    'Известия',
+    'НТВ Мир',
+    'НТВ Право',
+    'НТВ Сериал',
+    'НТВ Стиль',
+    'Россия 24',
+    'РТР Планета',
+    'ТНТ Music'
+];
+
+// Максимальное количество программ для отображения по умолчанию
+const MAX_VISIBLE_PROGRAMS = 6;
+
 let currentDate    = new Date().toISOString().split('T')[0];
 let currentChannel = 'all';
 let channelsData   = {};
@@ -1501,7 +1569,16 @@ function renderChannelFilter() {
     };
     filter.appendChild(allBtn);
 
-    Object.values(channelsData).forEach(ch => {
+    // Сортируем каналы по заданному порядку
+    const sortedChannels = Object.values(channelsData).sort((a, b) => {
+        const indexA = CHANNEL_ORDER.indexOf(a.display_name);
+        const indexB = CHANNEL_ORDER.indexOf(b.display_name);
+        const orderA = indexA === -1 ? 999 : indexA;
+        const orderB = indexB === -1 ? 999 : indexB;
+        return orderA - orderB;
+    });
+
+    sortedChannels.forEach(ch => {
         const btn = document.createElement('button');
         btn.className = 'filter-btn' + (currentChannel === ch.id ? ' active' : '');
         btn.textContent = ch.display_name;
@@ -1520,7 +1597,22 @@ function renderPrograms(programs) {
 
     const now = Math.floor(Date.now() / 1000);
 
-    const channelIds = Object.keys(programs);
+    // Сортировка каналов по заданному порядку
+    const channelIds = Object.keys(programs).sort((a, b) => {
+        const chA = channelsData[a];
+        const chB = channelsData[b];
+        if (!chA || !chB) return 0;
+        
+        const indexA = CHANNEL_ORDER.indexOf(chA.display_name);
+        const indexB = CHANNEL_ORDER.indexOf(chB.display_name);
+        
+        // Если канал не в списке, помещаем его в конец
+        const orderA = indexA === -1 ? 999 : indexA;
+        const orderB = indexB === -1 ? 999 : indexB;
+        
+        return orderA - orderB;
+    });
+    
     if (!channelIds.length) {
         grid.innerHTML = '<div class="empty">😔 Нет программ на выбранную дату</div>';
         return;
@@ -1575,10 +1667,25 @@ function renderPrograms(programs) {
             pastHtml += `</div>`;
         }
 
+        // Ограничиваем количество отображаемых программ
+        const visibleFuture = future.slice(0, MAX_VISIBLE_PROGRAMS);
+        const hiddenFuture = future.slice(MAX_VISIBLE_PROGRAMS);
+
         let futureHtml = '';
-        future.forEach(p => {
+        visibleFuture.forEach(p => {
             futureHtml += renderProgramItem(p, now, false, offsetHours);
         });
+
+        // Скрытые программы и кнопка "Показать ещё"
+        let expandHtml = '';
+        if (hiddenFuture.length > 0) {
+            expandHtml += `<div class="hidden-programs" id="hidden-${channelId}">`;
+            hiddenFuture.forEach(p => {
+                expandHtml += renderProgramItem(p, now, false, offsetHours);
+            });
+            expandHtml += `</div>`;
+            expandHtml += `<button class="expand-toggle" id="expand-btn-${channelId}" onclick="toggleExpand('${channelId}')">Показать ещё (${hiddenFuture.length})</button>`;
+        }
 
         const card = document.createElement('div');
         card.className = 'channel-card';
@@ -1597,6 +1704,7 @@ function renderPrograms(programs) {
             <div class="programs-list">
                 ${pastHtml}
                 ${futureHtml}
+                ${expandHtml}
             </div>
         `;
         grid.appendChild(card);
@@ -1633,6 +1741,22 @@ function togglePast(channelId) {
     const block = document.getElementById(`past-${channelId}`);
     if (!block) return;
     block.style.display = (block.style.display === 'none' || block.style.display === '') ? 'block' : 'none';
+}
+
+// Показать/скрыть дополнительные программы
+function toggleExpand(channelId) {
+    const block = document.getElementById(`hidden-${channelId}`);
+    const btn = document.getElementById(`expand-btn-${channelId}`);
+    if (!block || !btn) return;
+    
+    if (block.classList.contains('show')) {
+        block.classList.remove('show');
+        const count = block.querySelectorAll('.program-item').length;
+        btn.textContent = `Показать ещё (${count})`;
+    } else {
+        block.classList.add('show');
+        btn.textContent = 'Скрыть';
+    }
 }
 
 function escapeHtml(text) {

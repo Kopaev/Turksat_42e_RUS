@@ -6,3 +6,4 @@ epg.xml
 # Temporary files
 *.tmp
 *.log
+epg_cache.json
