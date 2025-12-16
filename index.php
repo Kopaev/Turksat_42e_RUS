@@ -69,7 +69,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'update_cache') {
     header('X-Accel-Buffering: no');
 
     set_time_limit(600);
-    ini_set('memory_limit', '1024M');
+    ini_set('memory_limit', '2048M');
 
     $log = [];
     $log[] = ['time' => date('H:i:s'), 'msg' => 'Начинаем загрузку EPG...'];
